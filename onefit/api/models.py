@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class MyUserManager(BaseUserManager):
@@ -78,3 +79,46 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+
+class Company(models.Model):
+    IP = 'IP'
+    TOO = 'TOO'
+    AO = 'AO'
+    name = models.CharField(max_length=200, unique=True)
+    type = (
+        (IP, 'IP'),
+        (TOO, 'TOO'),
+        (AO, 'AO'),
+    )
+    img = models.ImageField(upload_to='company', blank=True, null=True)
+    owner = models.CharField(max_length=200, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Companies"
+
+    def __str__(self):
+        return self.name
+
+
+class Review(models.Model):
+    comment = models.TextField()
+    rate = models.PositiveIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
+    created_at = models.DateField(auto_now_add=True)
+    company = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    creator = models.ForeignKey(
+        User,
+        on_delete=models.DO_NOTHING,
+        related_name='reviews'
+    )
+
+    def __str__(self):
+        return f'Review {self.id}'
