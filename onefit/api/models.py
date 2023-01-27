@@ -3,6 +3,18 @@ from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from datetime import date
+
+
+def validate_birthday(value):
+
+    if value.year >= date.today().year:
+        raise ValidationError(
+            _('You are under 16 years old'),
+            params={'value': value},
+        )
 
 
 class MyUserManager(BaseUserManager):
@@ -44,7 +56,7 @@ class User(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(validators=[validate_birthday])
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
@@ -85,12 +97,13 @@ class Company(models.Model):
     IP = 'IP'
     TOO = 'TOO'
     AO = 'AO'
-    name = models.CharField(max_length=200, unique=True)
-    type = (
+    TYPES = (
         (IP, 'IP'),
         (TOO, 'TOO'),
         (AO, 'AO'),
     )
+    name = models.CharField(max_length=200, unique=True)
+    type = models.CharField(max_length=3, choices=TYPES, default=TOO)
     img = models.ImageField(upload_to='company', blank=True, null=True)
     owner = models.CharField(max_length=200, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
