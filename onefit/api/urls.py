@@ -7,4 +7,5 @@ urlpatterns = [
     path('companies/', CompanyView.as_view(), name='companies'),
     path('companies/<int:pk>', CompanyDetailView.as_view(), name='company_detail'),
     path('companies/<str:tp>', CompanyListByTypeView.as_view(), name='company_detail'),
+    path('reviews/', ReviewList.as_view(), name='create_review'),
 ]

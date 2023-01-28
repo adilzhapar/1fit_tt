@@ -127,11 +127,12 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name='reviews'
     )
-    creator = models.ForeignKey(
+    creator = models.OneToOneField(
         User,
-        on_delete=models.DO_NOTHING,
-        related_name='reviews'
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        primary_key=True
     )
 
     def __str__(self):
-        return f'Review {self.id}'
+        return f'Review {self.creator}'
