@@ -11,14 +11,26 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CompanySerializer(serializers.ModelSerializer):
 
+
     class Meta:
         model = Company
-        fields = "__all__"
+        fields = ('name', 'type', 'img', 'created_at')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    creator = UserSerializer(read_only=True)
+    creator = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field='email'
+    )
     company = CompanySerializer(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = ('rate', 'comment', 'created_at', 'creator', 'company')
+
+
+class CreateReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review

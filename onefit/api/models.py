@@ -127,7 +127,7 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name='reviews'
     )
-    creator = models.OneToOneField(
+    creator = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='reviews',

@@ -12,7 +12,7 @@ class CompanyView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        content = Company.objects.values('name', 'type', 'img')
+        content = Company.objects.values('name', 'type', 'img')  # спросить как адаптировать сериалайзер под запрос
         serializer = CompanySerializer(content, many=True)
         return Response({"companies": serializer.data})
 
@@ -44,7 +44,7 @@ class ReviewList(APIView):
         return Response({"reviews": serializer.data})
 
     def post(self, request):
-        serializer = ReviewSerializer(data=request.data)
+        serializer = CreateReviewSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
