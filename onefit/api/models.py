@@ -117,6 +117,7 @@ class Company(models.Model):
 
 
 class Review(models.Model):
+    review_id = models.AutoField(primary_key=True)
     comment = models.TextField()
     rate = models.PositiveIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(5)]
@@ -130,8 +131,7 @@ class Review(models.Model):
     creator = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='reviews',
-        primary_key=True
+        related_name='reviews'
     )
 
     def __str__(self):

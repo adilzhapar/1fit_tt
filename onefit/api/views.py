@@ -45,7 +45,29 @@ class ReviewList(APIView):
 
     def post(self, request):
         serializer = CreateReviewSerializer(data=request.data)
+        creator_id = request.data['creator']
+        company_id = request.data['company']
+        is_there_review = Review.objects.filter(creator=creator_id, company=company_id).exists()
+        if is_there_review:
+            return Response({"error": "You have already left a review for this company"})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+
+
+class ReviewListByRate(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, rate):
+        content = Review.objects.filter(rate=rate)
+        serializer = ReviewSerializer(content, many=True)
+        return Response({"reviews": serializer.data})
+
+
+class UserReviews(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self, request, pk):
+        content = Review.objects.filter(creator_id=pk)
+        serializer = ReviewSerializer(content, many=True)
+        return Response({"reviews": serializer.data})
