@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -6,6 +7,22 @@ from rest_framework.permissions import IsAuthenticated
 from .models import *
 from .forms import *
 from .serializers import *
+
+
+class UserView(APIView):
+    def get(self, request):
+        content = User.objects.all()
+        serializer = UserSerializer(content, many=True)
+        return Response({"users": serializer.data})
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            password = serializer.validated_data.get('password')
+            serializer.validated_data['password'] = make_password(password)
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 
 class CompanyView(APIView):
@@ -67,6 +84,7 @@ class ReviewListByRate(APIView):
 
 class UserReviews(APIView):
     permission_classes = (IsAuthenticated,)
+
     def get(self, request, pk):
         content = Review.objects.filter(creator_id=pk)
         serializer = ReviewSerializer(content, many=True)
