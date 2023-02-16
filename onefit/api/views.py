@@ -28,6 +28,8 @@ class UserView(APIView):
 class CompanyView(APIView):
     permission_classes = (IsAuthenticated,)
 
+    # def filter_queryset(self, queryset):
+
     def get(self, request):
         content = Company.objects.values('name', 'type', 'img')  # спросить как адаптировать сериалайзер под запрос
         serializer = CompanySerializer(content, many=True)
@@ -38,7 +40,7 @@ class CompanyDetailView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, pk):
-        content = Company.objects.filter(pk=pk).values('name', 'type', 'img', 'created_at')
+        content = Company.objects.get(pk=pk).values('name', 'type', 'img', 'created_at')
         serializer = CompanySerializer(content, many=True)
         return Response({"company": serializer.data})
 
