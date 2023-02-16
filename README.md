@@ -1,10 +1,11 @@
 ## Technical task for 1fit
 
-This is Django application as API for simple 3 models.
+This is Django application as API for 3 models.
 Project has:
 - Authentication with token
 - Serializers
 - Class-based views
+- Swagger-ui
 
 How to set up project:
 ```
